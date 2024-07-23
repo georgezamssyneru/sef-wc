@@ -11,14 +11,8 @@
     "fruitcake/laravel-cors": "^2.0",
     "guzzlehttp/guzzle": "^7.0.1",
     "hip/custom-auth": "dev-master",
-    "hip/package-grid-editing": "dev-master",
-    "hip/package-maps-management": "dev-master",
-    "hip/package-reporting-management": "dev-master",
     "hip/package-role-management": "dev-master",
     "hip/package-user-management": "dev-master",
-    "hip/package-workflow": "dev-master",
-    "hip/package-form-generator": "dev-master",
-    "hip/package-tree": "dev-master",
     "krlove/eloquent-model-generator": "*",
     "laravel/framework": "^8.65",
     "laravel/sanctum": "^2.13",
@@ -60,42 +54,6 @@
     {
       "type": "path",
       "url": "./packages/PackageRoleManagment"
-    },
-    {
-      "type": "path",
-      "url": "./packages/PackageReportingManagment"
-    },
-    {
-      "type": "path",
-      "url": "./packages/PackageMapsManagment"
-    },
-    {
-      "type": "path",
-      "url": "./packages/PackageCalculation"
-    },
-    {
-      "type": "path",
-      "url": "./packages/GridEditing"
-    },
-    {
-      "type": "path",
-      "url": "./packages/PackageTelegram"
-    },
-    {
-      "type": "path",
-      "url": "./packages/PackageWorkflow"
-    },
-    {
-      "type": "path",
-      "url": "./packages/PackageScenario"
-    },
-    {
-      "type": "path",
-      "url": "./packages/FormGenerator"
-    },
-    {
-      "type": "path",
-      "url": "./packages/PackageTree"
     }
   ],
   "autoload-dev": {
