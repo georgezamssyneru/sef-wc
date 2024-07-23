@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Models\MasterData\FormGenerator;
+
+use App\Traits\Uuids;
+use Illuminate\Database\Eloquent\Model;
+
+class {0} extends Model
+{
+
+    //use Uuids;
+
+    protected $connection = 'pgsqlMasterData';
+
+    protected $table = '{1}';
+
+    protected $primaryKey = '{2}';
+
+    protected $guarded = [];
+
+    public $timestamps = false;
+
+}

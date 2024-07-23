@@ -1,0 +1,55 @@
+# For more information: https://laravel.com/docs/sail
+version: '3'
+services:
+
+    # DEVELOPMENT SAILS SERVICE
+    development.app:
+        build:
+            context: ./vendor/laravel/sail/runtimes/8.0
+            dockerfile: Dockerfile
+            args:
+                WWWGROUP: '${WWWGROUP}'
+                XDEBUG: ${SAIL_DEBUG}
+        image: sail-8.0/app
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
+        ports:
+            - '9003:80'
+        environment:
+            WWWUSER: '${WWWUSER}'
+            LARAVEL_SAIL: 1
+            XDEBUG_MODE: '${SAIL_XDEBUG_MODE:-off}'
+            XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
+        volumes:
+            - '.:/var/www/html'
+        networks:
+            - sail
+
+    # SELENIUM
+    chrome:
+        image: selenium/node-chrome:4.4.0-20220812
+        shm_size: 2gb
+        depends_on:
+          - selenium-hub
+        environment:
+          - SE_EVENT_BUS_HOST=selenium-hub
+          - SE_EVENT_BUS_PUBLISH_PORT=4442
+          - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+          - HUB_HOST=selenium-hub
+        ports:
+          - "6900:5900"
+        networks:
+          - sail
+
+    selenium-hub:
+        image: selenium/hub:4.4.0-20220812
+        ports:
+           - "4444:4444"
+        networks:
+          - sail
+
+networks:
+    sail:
+        driver: bridge
+
+#10.73.1.7

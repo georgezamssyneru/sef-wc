@@ -1,0 +1,11 @@
+version: '3.4'
+
+services:
+  postgres12:
+    container_name: psql_backup
+    image: postgres:12.4
+    restart: always
+    env_file:
+      - .env.postgres
+    ports:
+      - 54321:5432
