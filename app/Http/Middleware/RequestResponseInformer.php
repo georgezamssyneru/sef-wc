@@ -18,33 +18,35 @@ class RequestResponseInformer
     public function handle(Request $request, Closure $next)
     {
 
-        $user = $request->user();
+        // $user = $request->user();
 
-        // ----------------  RESPONSE
-        $response = $next($request);
+        // // ----------------  RESPONSE
+        // $response = $next($request);
 
-        if(isset($response->exception)){
+        // if(isset($response->exception)){
 
-            if( $user  ){
+        //     if( $user  ){
 
-                event( new EventHistory( array(
-                    'email'     => $user->email,
-                    'url '      => $request->fullUrl(),
-                    'error'     => $response->exception->getMessage()
-                ),'SYSTEM_ERROR') );
+        //         event( new EventHistory( array(
+        //             'email'     => $user->email,
+        //             'url '      => $request->fullUrl(),
+        //             'error'     => $response->exception->getMessage()
+        //         ),'SYSTEM_ERROR') );
 
-            }else{
+        //     }else{
 
-                event( new EventHistory( array(
-                    'url '      => $request->fullUrl(),
-                    'error'     => $response->exception->getMessage()
-                ),'SYSTEM_ERROR') );
+        //         event( new EventHistory( array(
+        //             'url '      => $request->fullUrl(),
+        //             'error'     => $response->exception->getMessage()
+        //         ),'SYSTEM_ERROR') );
 
-            }
+        //     }
 
-        }
+        // }
 
-        return $response;
+        $next($request);
+
+     
 
     }
 }

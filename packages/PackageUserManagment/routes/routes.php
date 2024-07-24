@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\App;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Hip\PackageUserManagement\Http\Controllers\PackageUserController;
@@ -9,6 +10,14 @@ use Hip\PackageUserManagement\Http\Controllers\SecUsersController;
 //Route::post('api/decrypt', [ PackageUserController::class, 'decrypt' ]);
 
 //Route::post('api/createPublicPrivateKeys', [ PackageUserController::class, 'createPublicPrivateKeys' ]);
+Route::get('/api/oracle', function () {
+
+    return response()->json([
+        'success' => true,
+        //'error'   => App::get()
+    ]);
+
+});
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
 

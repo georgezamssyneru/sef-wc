@@ -180,6 +180,7 @@ return [
         Barryvdh\DomPDF\ServiceProvider::class,
 
         Krlove\EloquentModelGenerator\Provider\GeneratorServiceProvider::class,
+        //Yajra\Oci8\Oci8ServiceProvider::class,
     ],
 
     /*
@@ -234,7 +235,6 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-        'PDF' => Barryvdh\DomPDF\Facade::class,
         'Esri' => App\Facades\EsriFacade::class,
     ]
 

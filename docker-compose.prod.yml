@@ -7,19 +7,19 @@ services:
       build:
         context: ./
         dockerfile: Dockerfile
-      image: hips_backend
-      container_name: app_hips
+      image: sef_backend_tms
+      container_name: app_backend_tms
       restart: unless-stopped
       tty: true
       environment:
-        SERVICE_NAME: app_hips
-        SERVICE_TAGS: dev
+        SERVICE_NAME: app_backend_tms
       working_dir: /var/www/html/
       volumes:
         - ./:/var/www/html/
         - .env:/var/www/html/.env
       ports:
         - "9002:80"
+      user: 'www-data'  
       networks:
         - app-network
 
