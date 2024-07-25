@@ -16,8 +16,6 @@ class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable, Uuids;
 
-    protected $connection = 'pgsql';
-
     protected $table = 'sec_user';
 
     protected $primaryKey = 'sec_user_id';

@@ -391,6 +391,22 @@ class AuthController extends Controller
 
     }
 
+    public function computeHash(string $password, string $salt, string $pepper, int $iteration = 5): string
+    {
+    
+        if ($iteration <= 0) {
+            return $password;
+        }
+    
+        $passwordSaltPepper = $password . $salt . $pepper;
+        $byteValue = utf8_encode($passwordSaltPepper);
+        $byteHash = hash('sha256', $byteValue, true);
+        $hash = base64_encode($byteHash);
+    
+        return self::computeHash($hash, $salt, $pepper, $iteration - 1);
+        
+    }
+
     /**
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -439,14 +455,20 @@ class AuthController extends Controller
         //  --------------- RATE LIMITER
         $this->ensureIsNotRateLimited($request);
 
+        $hash = $this->computeHash( $request['password'], $user->password_salt, env("PEPPER") );
+
+        return response()
+                ->json(['success' => false, 'message' => $hash ]);
+
+
         //  --------------- AUTHENTICATION DECLINED
-        if (!Auth::attempt(['email' => strtolower($request['email']), 'password' => $request['password']]))
+        if (!Auth::attempt(['email' => strtolower($request['email']), 'password_hash' => $request['password']]))
         {
 
             RateLimiter::hit($this->throttleKey($request));
 
             //  --------------- LOG EVENT FAILED
-            event( new EventHistory( array('email'=> $request['email']),'LOGIN_FAIL') );
+            //event( new EventHistory( array('email'=> $request['email']),'LOGIN_FAIL') );
 
             return response()
                 ->json(['message' => 'Unauthorized'], 401 );
@@ -459,7 +481,7 @@ class AuthController extends Controller
         $getWebMapToken = self::encrypt(auth()->user());
 
         //  --------------- LOG EVENT SUCCESS
-        event( new EventHistory($user,'LOGIN_SUCCESS') );
+        //event( new EventHistory( $user,'LOGIN_SUCCESS') );
 
         //  --------------- GET USER ROLES
         //  $userRoles = User::with('secRoleUser.secRole' )->find( auth()->user()->sec_user_id );
