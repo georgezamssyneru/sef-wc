@@ -37,19 +37,8 @@ class AuthController extends Controller
 
     use PermissionSec;
 
-    //  ----------  CUSTOM ESRI PROVIDER
-    protected $customEsri;
-
-    protected $superset;
-
-    public function __construct(
-        \App\ExternalProviders\Esri $customEsri,
-        \App\ExternalProviders\Superset $superset )
+    public function __construct( )
     {
-
-        $this->customEsri = $customEsri;
-
-        $this->superset = $superset;
 
     }
 

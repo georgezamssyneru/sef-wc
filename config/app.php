@@ -162,9 +162,6 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
 
-        //  ESRI SERVICE PROVIDER
-        App\Providers\EsriServiceProvider::class,
-
         /*
          * Package Service Providers...
          */
