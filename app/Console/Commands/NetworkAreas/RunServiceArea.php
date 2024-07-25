@@ -104,27 +104,6 @@ class RunServiceArea extends Command
                         'break_value'             => $feature['attributes']['ToBreak']
                     ]);
 
-                    //  -------------   GET FACILITY Tl id
-                    //  @todo SUBJECT TO CHANGE WHEN WE GET MORE CONTEXT
-//                    $getFacilityTlId = HipsFacilityTl::where([
-//                        ['facility_id', str_replace (array('{', '}'), '' , $feature['attributes']['Name_1'])],
-//                        ['acc_period_id', '=', '202303'],
-//                        ['plan_id', '=', 0 ]
-//                    ])->first();
-//
-//                    //  --------------  CHECK TO PROCEED TO UPDATE OR CREATE
-//                    if( $this->option('getServiceAreatype') && $getFacilityTlId && $getShape[0]->st_geomfromtext ){
-//                        HipsFacilityTlServiceArea::updateOrCreate(
-//                            ['facility_tl_id' => $getFacilityTlId->facility_tl_id ],
-//                            [
-//                                'facility_tl_id'        => $getFacilityTlId->facility_tl_id,
-//                                'shape'                 => $getShape[0]->st_geomfromtext,
-//                                'service_area_def_id'   => $this->option('service_area_def_id'),
-//                                'bed_type_id'           => $this->option('getServiceAreatype')->toArray()['service_area_def']['service_area_type']['bed_type_id']
-//                            ]
-//                        );
-//                    }
-
                 }
 
             }
