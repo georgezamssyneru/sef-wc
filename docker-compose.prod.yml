@@ -7,12 +7,12 @@ services:
       build:
         context: ./
         dockerfile: Dockerfile
-      image: hips_backend
-      container_name: app_hips
+      image: wc_backend
+      container_name: app_wc
       restart: unless-stopped
       tty: true
       environment:
-        SERVICE_NAME: app_hips
+        SERVICE_NAME: app_wc_tms
         SERVICE_TAGS: dev
       working_dir: /var/www/html/
       volumes:

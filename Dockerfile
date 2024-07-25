@@ -52,7 +52,7 @@ RUN docker-php-ext-configure oci8 --with-oci8=instantclient,/opt/oracle/instantc
 
 # Install other PHP extensions
 RUN docker-php-ext-configure opcache --enable-opcache \
-    && docker-php-ext-install pdo pdo_pgsql zip
+    && docker-php-ext-install pdo pdo_pgsql zip sockets bcmath
 
 # Copy application files
 COPY --from=build /app /var/www/html

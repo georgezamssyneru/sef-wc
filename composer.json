@@ -5,10 +5,9 @@
   "keywords": ["framework", "laravel"],
   "license": "MIT",
   "require": {
-    "php": "^7.3|^8.0",
+    "php": "^8.0",
     "barryvdh/laravel-dompdf": "^2.0",
     "casbin/laravel-authz": "^3.1",
-    "doctrine/dbal": "^3.0",
     "fruitcake/laravel-cors": "^2.0",
     "guzzlehttp/guzzle": "^7.0.1",
     "hip/custom-auth": "dev-main",
@@ -23,6 +22,7 @@
     "phpseclib/phpseclib": "~3.0",
     "symfony/css-selector": "^6.0",
     "vladimir-yuldashev/laravel-queue-rabbitmq": "^11.3",
+    "doctrine/dbal": "^3.0",
     "yajra/laravel-oci8": "^8.0"
   },
   "require-dev": {
