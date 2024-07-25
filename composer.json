@@ -8,11 +8,12 @@
     "php": "^7.3|^8.0",
     "barryvdh/laravel-dompdf": "^2.0",
     "casbin/laravel-authz": "^3.1",
+    "doctrine/dbal": "^3.0",
     "fruitcake/laravel-cors": "^2.0",
     "guzzlehttp/guzzle": "^7.0.1",
-    "hip/custom-auth": "dev-master",
-    "hip/package-role-management": "dev-master",
-    "hip/package-user-management": "dev-master",
+    "hip/custom-auth": "dev-main",
+    "hip/package-role-management": "dev-main",
+    "hip/package-user-management": "dev-main",
     "krlove/eloquent-model-generator": "*",
     "laravel/framework": "^8.65",
     "laravel/sanctum": "^2.13",
@@ -22,7 +23,7 @@
     "phpseclib/phpseclib": "~3.0",
     "symfony/css-selector": "^6.0",
     "vladimir-yuldashev/laravel-queue-rabbitmq": "^11.3",
-    "doctrine/dbal": "^3.0"
+    "yajra/laravel-oci8": "^8.0"
   },
   "require-dev": {
     "facade/ignition": "^2.5",

@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\App;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Hip\CustomAuth\Http\Controllers\AuthController;
@@ -14,6 +15,13 @@ use Hip\CustomAuth\Http\Controllers\AuthController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+Route::get('api/oracle', function () {
+    return response([
+        'success'   => true,
+        'message'   => App::get()
+    ]);
+});
 
 //  --------    REGISTER
 Route::post('api/register', [ AuthController::class, 'register' ]);

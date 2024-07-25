@@ -47,41 +47,6 @@
       0 => 'Hip\\CustomAuth\\Providers\\CustomAuthServiceProvider',
     ),
   ),
-  'hip/package-calculation' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'Hip\\PackageCalculation\\Providers\\CalculationServiceProvider',
-    ),
-  ),
-  'hip/package-form-generator' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'Hip\\FormGenerator\\Providers\\FormGeneratorServiceProvider',
-    ),
-  ),
-  'hip/package-grid-editing' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'Hip\\GridEditing\\Providers\\GridEditingServiceProvider',
-    ),
-  ),
-  'hip/package-maps-management' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'Hip\\PackageMapsManagment\\Providers\\MapsServiceProvider',
-    ),
-  ),
-  'hip/package-reporting-management' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'Hip\\PackageReportingManagment\\Providers\\ReportingServiceProvider',
-    ),
-  ),
   'hip/package-role-management' => 
   array (
     'providers' => 
@@ -89,39 +54,11 @@
       0 => 'Hip\\PackageRoleManagement\\Providers\\RolesServiceProvider',
     ),
   ),
-  'hip/package-scenario' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'Hip\\PackageScenario\\Providers\\ScenarioServiceProvider',
-    ),
-  ),
-  'hip/package-telegram' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'Hip\\Telegram\\Providers\\TelegramServiceProvider',
-    ),
-  ),
-  'hip/package-tree' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'Hip\\PackageTree\\Providers\\TreeServiceProvider',
-    ),
-  ),
   'hip/package-user-management' => 
   array (
     'providers' => 
     array (
       0 => 'Hip\\PackageUserManagement\\Providers\\PackageUserServiceProvider',
-    ),
-  ),
-  'hip/package-workflow' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'Hip\\Workflow\\Providers\\WorkflowServiceProvider',
     ),
   ),
   'krlove/eloquent-model-generator' => 
@@ -199,6 +136,14 @@
     'providers' => 
     array (
       0 => 'VladimirYuldashev\\LaravelQueueRabbitMQ\\LaravelQueueRabbitMQServiceProvider',
+    ),
+  ),
+  'yajra/laravel-oci8' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Yajra\\Oci8\\Oci8ServiceProvider',
+      1 => 'Yajra\\Oci8\\Oci8ValidationServiceProvider',
     ),
   ),
 );
