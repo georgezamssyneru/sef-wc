@@ -40,7 +40,7 @@ trait PermissionSec
             $getCache = SecCache::where([
                 ['user_id', $user->sec_user_id ],
                 ['can_view', '1']
-            ])->whereIn('role_id', [ env('ROLE_APP_USER'), env('ROLE_APP_INFRASTRUCTURE_PLANNER'), env('ROLE_APP_STRATEGIC_PLANNER'), env('ROLE_IMPLEMENTING_AGENT') ])->distinct()->get();
+            ])->whereIn('role_id', [ env('ROLE_APP_USER') ])->distinct()->get();
         }
 
         if(!$getCache)

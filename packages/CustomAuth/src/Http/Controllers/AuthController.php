@@ -37,7 +37,7 @@ class AuthController extends Controller
 
     use PermissionSec;
 
-    public function __construct( )
+    public function __construct()
     {
 
     }
@@ -49,24 +49,24 @@ class AuthController extends Controller
     public function register(Request $request)
     {
 
-        try{
-            $validator = Validator::make($request->all(),[
+        try {
+            $validator = Validator::make($request->all(), [
                 'first_name' => 'required|string|max:255',
                 'last_name' => 'required|string|max:255',
-                'email' => ['required','email','max:255','unique:sec_user' ],
+                'email' => ['required', 'email', 'max:255', 'unique:sec_user'],
                 'password' => 'required|string|min:8',
             ]);
 
-            if($validator->fails()){
-                ExternalHelper::failedValidation( $validator );
+            if ($validator->fails()) {
+                ExternalHelper::failedValidation($validator);
             }
 
             $user = User::create([
-                'first_name'        => $request->first_name,
-                'last_name'         => $request->last_name,
-                'email'             => strtolower($request->email),
-                'password'          => Hash::make($request->password),
-                'user_status_id'    => '3'
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'email' => strtolower($request->email),
+                'password' => Hash::make($request->password),
+                'user_status_id' => '3'
             ]);
 
             event(new Registered($user));
@@ -74,12 +74,12 @@ class AuthController extends Controller
             //$token = $user->createToken('auth_token')->plainTextToken;
 
             return response()
-                ->json(['success'=>true, 'data' => $user]);
+                ->json(['success' => true, 'data' => $user]);
 
-        }catch(Exception $e){
+        } catch (Exception $e) {
 
             return response()
-                ->json(['success'=>false, 'error' => $e->getMessage() ]);
+                ->json(['success' => false, 'error' => $e->getMessage()]);
 
         }
 
@@ -89,23 +89,24 @@ class AuthController extends Controller
      * @param Request $request
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
-    public function resendEmailConfirmation( Request $request ){
+    public function resendEmailConfirmation(Request $request)
+    {
 
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             'email' => 'required|email',
         ]);
 
-        if($validator->fails()){
+        if ($validator->fails()) {
 
-            ExternalHelper::failedValidation( $validator );
+            ExternalHelper::failedValidation($validator);
 
         }
 
-        $user = User::where('email', $request->email )->first();
+        $user = User::where('email', $request->email)->first();
         $user->sendEmailVerificationNotification();
 
         return response([
-            'success'    => true,
+            'success' => true,
         ]);
 
     }
@@ -114,66 +115,77 @@ class AuthController extends Controller
      * @param Request $request
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
-    public function resetPassword(Request $request){
+    public function resetPassword(Request $request)
+    {
 
-        try{
+        try {
 
-            $validator = Validator::make($request->all(),[
+            $validator = Validator::make($request->all(), [
                 'Password' => ['required'],
             ]);
 
-            if($validator->fails()){
+            if ($validator->fails()) {
 
-                ExternalHelper::failedValidation( $validator );
+                ExternalHelper::failedValidation($validator);
 
             }
 
-            $user =  User::find(auth()->user()->sec_user_id);
-            $user->password =  Hash::make($request->Password);
+            $user = User::find(auth()->user()->sec_user_id);
+            $user->password = Hash::make($request->Password);
             $user->save();
 
             //  LOG TO DB, PASSWORD RESET
             //  ------- SEC LOG USER
             SecLogUser::create([
-                'sec_user_log_id'   =>  Str::uuid()->toString(),
-                'user_id'           =>  auth()->user()->sec_user_id,
-                'user_status_id'    =>  5,
-                'modified_dt'       =>  Carbon::now(),
-                'review_user_id'    =>  null,
-                'comment'           =>  null
+                'sec_user_log_id' => Str::uuid()->toString(),
+                'user_id' => auth()->user()->sec_user_id,
+                'user_status_id' => 5,
+                'modified_dt' => Carbon::now(),
+                'review_user_id' => null,
+                'comment' => null
             ]);
 
             return response([
-                'success'   => true,
-                'message'   => 'Password changed.'
+                'success' => true,
+                'message' => 'Password changed.'
             ]);
 
-        }catch (\Illuminate\Database\QueryException $e) {
+        } catch (\Illuminate\Database\QueryException $e) {
 
             //  LOG TO DB
-            event( new EventHistory( array(
-                'email'     => null,
-                'url '      => $request->fullUrl(),
-                'error'     => $e->getMessage()
-            ),'API_ENDPOINT_ERROR') );
+            event(
+                new EventHistory(
+                    array(
+                        'email' => null,
+                        'url ' => $request->fullUrl(),
+                        'error' => $e->getMessage()
+                    ),
+                    'API_ENDPOINT_ERROR'
+                )
+            );
 
             return response()->json([
                 'success' => false,
-                'message'=> $e->getMessage()
+                'message' => $e->getMessage()
             ]);
 
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
 
             //  LOG TO DB
-            event( new EventHistory( array(
-                'email'     => null,
-                'url '      => $request->fullUrl(),
-                'error'     => $e->getMessage()
-            ),'API_ENDPOINT_ERROR') );
+            event(
+                new EventHistory(
+                    array(
+                        'email' => null,
+                        'url ' => $request->fullUrl(),
+                        'error' => $e->getMessage()
+                    ),
+                    'API_ENDPOINT_ERROR'
+                )
+            );
 
             return response()->json([
                 'success' => false,
-                'message'=> $e->getMessage()
+                'message' => $e->getMessage()
             ]);
 
         }
@@ -184,19 +196,20 @@ class AuthController extends Controller
      * @param Request $request
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
-    public function reset(Request $request){
+    public function reset(Request $request)
+    {
 
-        try{
+        try {
 
-            $validator = Validator::make($request->all(),[
+            $validator = Validator::make($request->all(), [
                 'token' => 'required',
                 'email' => 'required|email',
                 'password' => ['required', 'confirmed', RulesPassword::defaults()],
             ]);
 
-            if($validator->fails()){
+            if ($validator->fails()) {
 
-                ExternalHelper::failedValidation( $validator );
+                ExternalHelper::failedValidation($validator);
 
             }
 
@@ -222,51 +235,61 @@ class AuthController extends Controller
                 //  LOG TO DB, PASSWORD RESET
                 //  ------- SEC LOG USER
                 SecLogUser::create([
-                    'sec_user_log_id'   =>  Str::uuid()->toString(),
-                    'user_id'           =>  $getUser->sec_user_id,
-                    'user_status_id'    =>  5,
-                    'modified_dt'       =>  Carbon::now(),
-                    'review_user_id'    =>  null,
-                    'comment'           =>  null
+                    'sec_user_log_id' => Str::uuid()->toString(),
+                    'user_id' => $getUser->sec_user_id,
+                    'user_status_id' => 5,
+                    'modified_dt' => Carbon::now(),
+                    'review_user_id' => null,
+                    'comment' => null
                 ]);
 
                 return response([
-                    'success'    => true,
-                    'message'=> 'Password reset successfully'
+                    'success' => true,
+                    'message' => 'Password reset successfully'
                 ]);
-            }else{
+            } else {
                 return response([
-                    'success'    => false,
-                    'error'      => 'Something went wrong with the password rest.'
+                    'success' => false,
+                    'error' => 'Something went wrong with the password rest.'
                 ]);
             }
 
-        }catch (\Illuminate\Database\QueryException $e) {
+        } catch (\Illuminate\Database\QueryException $e) {
 
             //  LOG TO DB
-            event( new EventHistory( array(
-                'email'     => null,
-                'url '      => $request->fullUrl(),
-                'error'     => $e->getMessage()
-            ),'API_ENDPOINT_ERROR') );
+            event(
+                new EventHistory(
+                    array(
+                        'email' => null,
+                        'url ' => $request->fullUrl(),
+                        'error' => $e->getMessage()
+                    ),
+                    'API_ENDPOINT_ERROR'
+                )
+            );
 
             return response()->json([
                 'success' => false,
-                'message'=> $e->getMessage()
+                'message' => $e->getMessage()
             ]);
 
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
 
             //  LOG TO DB
-            event( new EventHistory( array(
-                'email'     => null,
-                'url '      => $request->fullUrl(),
-                'error'     => $e->getMessage()
-            ),'API_ENDPOINT_ERROR') );
+            event(
+                new EventHistory(
+                    array(
+                        'email' => null,
+                        'url ' => $request->fullUrl(),
+                        'error' => $e->getMessage()
+                    ),
+                    'API_ENDPOINT_ERROR'
+                )
+            );
 
             return response()->json([
                 'success' => false,
-                'message'=> $e->getMessage()
+                'message' => $e->getMessage()
             ]);
 
         }
@@ -277,25 +300,26 @@ class AuthController extends Controller
      * @param Request $request
      * @return array
      */
-    public function forgotPassword(Request $request){
+    public function forgotPassword(Request $request)
+    {
 
         $request->validate([
-            'email' =>  'required|email'
+            'email' => 'required|email'
         ]);
 
         $status = Password::sendResetLink(
             $request->only('email')
         );
 
-        if($status == Password::RESET_LINK_SENT){
+        if ($status == Password::RESET_LINK_SENT) {
             return [
-                'success'    => true,
-                'status'    => __($status)
+                'success' => true,
+                'status' => __($status)
             ];
-        }else{
+        } else {
             return [
-                'success'    => false,
-                'message'    => 'Can not reset your email.'
+                'success' => false,
+                'message' => 'Can not reset your email.'
             ];
         }
 
@@ -305,7 +329,8 @@ class AuthController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function decrypt(Request $request){
+    public function decrypt(Request $request)
+    {
 
         $private = RSA::loadPrivateKey(env('PRIVATE_KEY'));
 
@@ -324,7 +349,8 @@ class AuthController extends Controller
      * @param $token
      * @return mixed
      */
-    public static function decryptToken($token){
+    public static function decryptToken($token)
+    {
 
         $private = RSA::loadPrivateKey(env('PRIVATE_KEY'));
 
@@ -343,13 +369,14 @@ class AuthController extends Controller
      * @param $data
      * @return string
      */
-    public static function encryptWithData( array $data ){
+    public static function encryptWithData(array $data)
+    {
 
         $key = PublicKeyLoader::load(env('PUBLIC_KEY'));
 
-        $key = $key->withPadding( RSA::ENCRYPTION_PKCS1 );
+        $key = $key->withPadding(RSA::ENCRYPTION_PKCS1);
 
-        return base64_encode( $key->encrypt( json_encode( $data )) );
+        return base64_encode($key->encrypt(json_encode($data)));
 
     }
 
@@ -357,18 +384,19 @@ class AuthController extends Controller
      * @param $user
      * @return string
      */
-    public function encrypt( $user ){
+    public function encrypt($user)
+    {
 
         $key = PublicKeyLoader::load(env('PUBLIC_KEY'));
 
-        $key = $key->withPadding( RSA::ENCRYPTION_PKCS1 );
+        $key = $key->withPadding(RSA::ENCRYPTION_PKCS1);
 
         $package = array(
             'userid' => '{' . $user->sec_user_id . '}',
-            'expiry' => Carbon::now('UTC')->addMinutes( 240 )->format('Y-m-d H:i:s')
+            'expiry' => Carbon::now('UTC')->addMinutes(240)->format('Y-m-d H:i:s')
         );
 
-        return base64_encode( $key->encrypt( json_encode( $package )) );
+        return base64_encode($key->encrypt(json_encode($package)));
 
     }
 
@@ -377,45 +405,30 @@ class AuthController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function createPublicPrivateKeys(Request $request){
+    public function createPublicPrivateKeys(Request $request)
+    {
 
         $private = RSA::createKey();
-        $private = $private->withPadding(RSA::SIGNATURE_PSS )->withHash('sha256');
+        $private = $private->withPadding(RSA::SIGNATURE_PSS)->withHash('sha256');
         $public = $private->getPublicKey();
 
         return response()->json([
-            'success'    => true,
-            'private'    => $private->toString('PKCS1'),
-            'public'     => $public->toString('PKCS1')
+            'success' => true,
+            'private' => $private->toString('PKCS1'),
+            'public' => $public->toString('PKCS1')
         ]);
 
     }
 
-    public function computeHash(string $password, string $salt, string $pepper, int $iteration = 5): string
-    {
-    
-        if ($iteration <= 0) {
-            return $password;
-        }
-    
-        $passwordSaltPepper = $password . $salt . $pepper;
-        $byteValue = utf8_encode($passwordSaltPepper);
-        $byteHash = hash('sha256', $byteValue, true);
-        $hash = base64_encode($byteHash);
-    
-        return self::computeHash($hash, $salt, $pepper, $iteration - 1);
-        
-    }
-
     /**
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function login( Request $request )
+    public function login(Request $request)
     {
 
         //  ---------------   PLACE VALIDATION ON REQUEST
-        $validator = Validator::make( $request->all(), [
+        $validator = Validator::make($request->all(), [
             'email' => 'required',
             'password' => 'required',
         ]);
@@ -424,77 +437,70 @@ class AuthController extends Controller
             return response()->json($validator->errors());
         }
 
-        //  ---------------
+        //  ---------------     CHECK IF USER IS REGISTERED
         $user = User::where('email', strtolower($request['email']))->first();
 
-        if(!$user){
+        if (!$user) {
 
             //  --------------- LOG EVENT FAILED
-            event( new EventHistory( array('email'=> $request['email']),'LOGIN_NOT_REGISTERED') );
+            event(new EventHistory(array('email' => $request['email']), 'LOGIN_NOT_REGISTERED'));
 
             return response()
                 ->json([
                     'success' => false,
                     'message' => 'NOT_REGISTERED'
-                ], 200 );
+                ], 200);
 
         }
 
         //  --------------- CHECK IF USER IS ADMIN
         $checkAdminRoleUser = SecRoleUser::where([
-            [ 'user_id', $user->sec_user_id ],
-            [ 'role_id', env('ROLE_APP_ADMIN')]
+            ['user_id', $user->sec_user_id],
+            ['role_id', env('ROLE_APP_ADMIN')]
         ])->first();
 
         //  --------------- IF ACCOUNT INACTIVE DONT ALLOW LOGIN
-        if( $user->user_status_id === 1 && !$checkAdminRoleUser){
+        if ($user->user_status_id === 1 && !$checkAdminRoleUser) {
             return response()
-                ->json(['success' => false, 'message' => 'NOT_AUTHORIZED'], 200 );
+                ->json(['success' => false, 'message' => 'NOT_AUTHORIZED'], 200);
         }
 
         //  --------------- RATE LIMITER
         $this->ensureIsNotRateLimited($request);
 
-        $hash = $this->computeHash( $request['password'], $user->password_salt, env("PEPPER") );
-
-        return response()
-                ->json(['success' => false, 'message' => $hash ]);
-
+        //$hash = ExternalHelper::computeHash( $request['password'], $user->password_salt, env("PEPPER") );
 
         //  --------------- AUTHENTICATION DECLINED
-        if (!Auth::attempt(['email' => strtolower($request['email']), 'password_hash' => $request['password']]))
-        {
-
+        if (!ExternalHelper::checkHash($request['password'], $user->password_hash, $user->password_salt, env("PEPPER"), 5)) {
             RateLimiter::hit($this->throttleKey($request));
-
-            //  --------------- LOG EVENT FAILED
-            //event( new EventHistory( array('email'=> $request['email']),'LOGIN_FAIL') );
-
             return response()
-                ->json(['message' => 'Unauthorized'], 401 );
+                ->json(['message' => 'Unauthorized'], 401);
         }
+
+        //  --------------  LOGIN USER
+        Auth::login($user);
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        $components = ( $this->getMenuComponents( auth()->user(), $request ) == false ) ? [] :  $this->getMenuComponents( auth()->user(), $request);
+        $components = ($this->getMenuComponents(auth()->user(), $request) == false) ? [] : $this->getMenuComponents(auth()->user(), $request);
 
         $getWebMapToken = self::encrypt(auth()->user());
 
         //  --------------- LOG EVENT SUCCESS
-        //event( new EventHistory( $user,'LOGIN_SUCCESS') );
+        event(new EventHistory($user, 'LOGIN_SUCCESS'));
 
         //  --------------- GET USER ROLES
         //  $userRoles = User::with('secRoleUser.secRole' )->find( auth()->user()->sec_user_id );
 
         return response()->json([
-                'success'       => true,
-                'components'    => $components,
-                'user'          => auth()->user()->load(['lastLogin', 'lastResetPassword']),
-                'roles'         => auth()->user()->load(['secRoleUser.secRole']),
-                'access_token'  => $token,
-                'HIPS_token'    => $getWebMapToken,
-                'token_type'    => 'Bearer',
-            ]);
+            'success' => true,
+            'components' => $components,
+            'user' => auth()->user()->load(['lastLogin', 'lastResetPassword']),
+            'roles' => auth()->user()->load(['secRoleUser.secRole']),
+            'access_token' => $token,
+            'HIPS_token' => $getWebMapToken,
+            'token_type' => 'Bearer',
+        ]);
 
     }
 
@@ -515,17 +521,23 @@ class AuthController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function authenticatedTreeComponents( Request $request ){
+    public function authenticatedTreeComponents(Request $request)
+    {
+
+       
 
         //  BUILD AUTHENTICATED MENU
-        $permissionMenu = $this->getMenuComponents( auth()->user(), $request );
-
-        if($permissionMenu)
-            return response()
-                ->json([ 'success' => true, 'data' =>  $permissionMenu ], 200);
+        $permissionMenu = $this->getMenuComponents(auth()->user(), $request);
 
         return response()
-            ->json([ 'success' => false, 'error' =>  'permission menu not found.' ], 200);
+        ->json(['success' => true, 'data' => $permissionMenu], 200);
+
+        if ($permissionMenu)
+            return response()
+                ->json(['success' => true, 'data' => $permissionMenu], 200);
+
+        return response()
+            ->json(['success' => false, 'error' => 'permission menu not found.'], 200);
 
     }
 
@@ -533,17 +545,18 @@ class AuthController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function authenticatedComponentInstance( Request $request ){
+    public function authenticatedComponentInstance(Request $request)
+    {
 
         //  BUILD AUTHENTICATED MENU
-        $dashboards = $this->getComponentInstance( auth()->user(), $request );
+        $dashboards = $this->getComponentInstance(auth()->user(), $request);
 
-        if( $dashboards )
+        if ($dashboards)
             return response()
-                ->json([ 'success' => true, 'data' =>  $dashboards ], 200);
+                ->json(['success' => true, 'data' => $dashboards], 200);
 
         return response()
-            ->json([ 'success' => false, 'error' =>  'You dont seem to have permissions to dashboards.' ], 200);
+            ->json(['success' => false, 'error' => 'You dont seem to have permissions to dashboards.'], 200);
 
     }
 
@@ -551,7 +564,8 @@ class AuthController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function profile(Request $request){
+    public function profile(Request $request)
+    {
 
         $getWebMapToken = self::encrypt(auth()->user());
 
@@ -560,11 +574,11 @@ class AuthController extends Controller
 
         return response()
             ->json([
-                'success' =>  true,
+                'success' => true,
                 'user' => auth()->user()->load(['lastLogin', 'lastResetPassword']),
-                'roles'      =>  auth()->user()->load(['secRoleUser.secRole']),
+                'roles' => auth()->user()->load(['secRoleUser.secRole']),
                 'HIPS_token' => $getWebMapToken
-                ], 200);
+            ], 200);
 
     }
 
@@ -572,19 +586,20 @@ class AuthController extends Controller
      * @param Request $request
      * @return \Illuminate\Contracts\Auth\Authenticatable|null
      */
-    public function testConnection(Request $request){
+    public function testConnection(Request $request)
+    {
 
         // to check if a user has permission
         if (Enforcer::enforce("Amajuba DM", "map_view", "view")) {
             return response()
-                ->json(['success' => true ]);
+                ->json(['success' => true]);
         } else {
             return response()
-                ->json(['success' => false ]);
+                ->json(['success' => false]);
         }
 
         return response()
-            ->json(['success' => 200 ]);
+            ->json(['success' => 200]);
 
     }
 
@@ -594,7 +609,7 @@ class AuthController extends Controller
      */
     public function ensureIsNotRateLimited($request)
     {
-        if (! RateLimiter::tooManyAttempts($this->throttleKey($request), 5)) {
+        if (!RateLimiter::tooManyAttempts($this->throttleKey($request), 5)) {
             return;
         }
 
@@ -603,12 +618,12 @@ class AuthController extends Controller
         $seconds = RateLimiter::availableIn($this->throttleKey($request));
 
         //  --------------- LOG EVENT FAILED
-        event( new EventHistory( array('email'=> $request['email']),'TO_MANY_LOGIN_ATTEMPTS') );
+        event(new EventHistory(array('email' => $request['email']), 'TO_MANY_LOGIN_ATTEMPTS'));
 
         return response()
             ->json([
                 'success' => false,
-                'email'   => trans('auth.throttle', [
+                'email' => trans('auth.throttle', [
                     'seconds' => $seconds,
                     'minutes' => ceil($seconds / 60),
                 ])
@@ -623,233 +638,9 @@ class AuthController extends Controller
      */
     public function throttleKey($request)
     {
-        return Str::lower($request['email']).'|'.$request->ip();
+        return Str::lower($request['email']) . '|' . $request->ip();
     }
 
 
-    /**
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function getSupersetGuestToken(Request $request){
-
-        try {
-
-            $getAccessToken = $this->superset->getAccessGuestToken( env('SUPERSET_API') . '/api/v1/security/login', [], array(
-                "password" => env("SUPERSET_PASSWORD"),
-                "provider" => "db",
-                "refresh" => "true",
-                "username" => env("SUPERSET_USERNAME"),
-            ));
-
-            if(!isset($getAccessToken['access_token'])){
-                return response()
-                    ->json([
-                        'success' => false,
-                        'message' => "No access token."
-                    ]);
-            }
-
-            $allowedDashboards = [];
-
-            $allowAllDashboardsPlaced = AppDashboard::where('dash_type_id','=', 4)->get();
-
-            foreach($allowAllDashboardsPlaced as $dash){
-
-                array_push($allowedDashboards, array(
-                    "type" => "dashboard",
-                    "id"   => $dash->dash_esri_id
-                ));
-
-            }
-
-            $getGuestToken = $this->superset->getAccessGuestToken( env('SUPERSET_API') . '/api/v1/security/guest_token/', array(
-                "Authorization" => "Bearer " . $getAccessToken['access_token']
-            ), array(
-                "user" => array(
-                    "username" => "HipsUser",
-                    "first_name" => "HIPS User",
-                    "last_name" => "HIPS User"
-                ),
-                "resources" => $allowedDashboards,
-                "rls" => [
-                ]
-            ));
-
-            return response()
-                ->json([
-                    'success' => true,
-                    'token'   => $getGuestToken['token']
-                ]);
-
-        }catch (\Illuminate\Database\QueryException $e) {
-
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage()
-            ]);
-
-        }catch(\Exception $e){
-
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage()
-            ]);
-
-        }
-
-    }
-
-    /**
-     * GET DASHBOARD WITH RLS FILTER
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function getSupersetGuestTokenWithFilters(Request $request){
-
-        try {
-
-            $getAccessToken = $this->superset->getAccessGuestToken( env('SUPERSET_API') . '/api/v1/security/login', [], array(
-                "password" => env("SUPERSET_PASSWORD"),
-                "provider" => "db",
-                "refresh" => "true",
-                "username" => env("SUPERSET_USERNAME"),
-            ));
-
-            if(!isset($getAccessToken['access_token'])){
-                return response()
-                    ->json([
-                        'success' => false,
-                        'message' => "No access token."
-                    ]);
-            }
-
-            $allowedDashboards = [];
-
-            array_push($allowedDashboards, array(
-                "type" => "dashboard",
-                "id"   => $request->dash_id
-            ));
-
-            $checkRls = [];
-
-            if( $request->rls == 'true' ){
-                $checkRls = [
-                    array(
-                        "clause"   =>  "facility_id IN ( '". $request->facility_id ."')"
-                    )
-                ];
-            }
-
-            $getGuestToken = $this->superset->getAccessGuestToken( env('SUPERSET_API') . '/api/v1/security/guest_token/', array(
-                "Authorization" => "Bearer " . $getAccessToken['access_token']
-            ), array(
-                "user" => array(
-                    "username" => "HipsUser",
-                    "first_name" => "HIPS User",
-                    "last_name" => "HIPS User"
-                ),
-                "resources" => $allowedDashboards,
-                "rls" => $checkRls
-            ));
-
-            return response()
-                ->json([
-                    'success' => true,
-                    'token'   => $getGuestToken['token']
-                ]);
-
-        }catch (\Illuminate\Database\QueryException $e) {
-
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage()
-            ]);
-
-        }catch(\Exception $e){
-
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage()
-            ]);
-
-        }
-
-    }
-
-    /**
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     * @todo tighter security(Awaiting feedback)
-     */
-    public function getSupersetGuestTokenForDashboardId(Request $request){
-
-        try {
-
-            $allowedDashboards = [];
-
-            $validator = Validator::make($request->all(),[
-                'dashboardId' => 'required',
-            ]);
-
-            if($validator->fails()){
-                ExternalHelper::failedValidation( $validator );
-            }
-
-            $getAccessToken = $this->superset->getAccessGuestToken( env('SUPERSET_API') . '/api/v1/security/login', [], array(
-                "password" => env("SUPERSET_PASSWORD"),
-                "provider" => "db",
-                "refresh" => "true",
-                "username" => env("SUPERSET_USERNAME"),
-            ));
-
-            if(!isset($getAccessToken['access_token'])){
-                return response()
-                    ->json([
-                        'success' => false,
-                        'message' => "No access token."
-                    ]);
-            }
-
-            array_push($allowedDashboards, array(
-                "type" => "dashboard",
-                "id"   => $request['dashboardId']
-            ));
-
-            $getGuestToken = $this->superset->getAccessGuestToken( env('SUPERSET_API') . '/api/v1/security/guest_token/', array(
-                "Authorization" => "Bearer " . $getAccessToken['access_token']
-            ), array(
-                "user" => array(
-                    "username" => "HipsUser",
-                    "first_name" => "HIPS User",
-                    "last_name" => "HIPS User"
-                ),
-                "resources" => $allowedDashboards,
-                "rls" => []
-            ));
-
-            return response()
-                ->json([
-                    'success' => true,
-                    'token'   => $getGuestToken['token']
-                ]);
-
-        }catch (\Illuminate\Database\QueryException $e) {
-
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage()
-            ]);
-
-        }catch(\Exception $e){
-
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage()
-            ]);
-
-        }
-
-    }
-
+    
 }
