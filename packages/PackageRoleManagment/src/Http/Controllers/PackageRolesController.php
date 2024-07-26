@@ -137,8 +137,7 @@ class PackageRolesController extends Controller
 
             }
 
-            //  RUN TRIGGER TO INITIATE SEC CACHE
-            DB::select("call pop_sec_cache( ? )", array( $request->user ));
+            DB::executeProcedure('MASTER_APP.pop_sec_cache', [$request->user]);
 
         });
 
@@ -247,8 +246,7 @@ class PackageRolesController extends Controller
 
             }
 
-            //  RUN TRIGGER TO INITIATE SEC CACHE
-            DB::select("call pop_sec_cache( ? )", array( $request->user ));
+            DB::executeProcedure('MASTER_APP.pop_sec_cache', [$request->user]);
 
         });
 
@@ -465,8 +463,7 @@ class PackageRolesController extends Controller
                     ]
                 );
 
-                //  RUN TRIGGER TO INITIATE SEC CACHE
-                DB::select("call pop_sec_cache( ? )", array( $request->user_id ));
+                DB::executeProcedure('MASTER_APP.pop_sec_cache', [$request->user]);
 
             }
 

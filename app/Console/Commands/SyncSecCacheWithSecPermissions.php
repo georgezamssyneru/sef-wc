@@ -46,8 +46,7 @@ class SyncSecCacheWithSecPermissions extends Command
 
         foreach ($users as $user) {
 
-            DB::connection('pgsqlMasterApp')
-                ->select("call pop_sec_cache('".$user->sec_user_id."')");
+            DB::executeProcedure('MASTER_APP.pop_sec_cache', [$user->sec_user_id]);
 
         }
 

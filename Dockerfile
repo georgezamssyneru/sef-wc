@@ -1,6 +1,5 @@
 # Build Stage
 FROM composer:2.4 AS build
-
 WORKDIR /app
 COPY . /app/
 RUN composer install --prefer-dist --no-dev --optimize-autoloader --no-interaction --ignore-platform-reqs
@@ -62,11 +61,8 @@ COPY .env /var/www/html/.env
 # Set the working directory
 WORKDIR /var/www/html
 
-# Ensure environment variables are loaded and clear any cached configuration
+# Ensure environment variables are loaded
 RUN php artisan config:clear \
-    && php artisan config:cache \
-    && php artisan cache:clear \
-    && php artisan route:cache \
     && mkdir -p storage/logs \
     && chmod -R 775 storage \
     && chmod -R 775 bootstrap/cache \

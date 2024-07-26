@@ -524,13 +524,8 @@ class AuthController extends Controller
     public function authenticatedTreeComponents(Request $request)
     {
 
-       
-
         //  BUILD AUTHENTICATED MENU
         $permissionMenu = $this->getMenuComponents(auth()->user(), $request);
-
-        return response()
-        ->json(['success' => true, 'data' => $permissionMenu], 200);
 
         if ($permissionMenu)
             return response()

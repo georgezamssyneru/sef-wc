@@ -596,9 +596,8 @@ class PackageUserController extends Controller
                             ]);
 
                         }
-
-                        //  RUN TRIGGER TO INITIATE SEC CACHE
-                        DB::select("call pop_sec_cache( ? )", array( $user->sec_user_id ));
+                        
+                        DB::executeProcedure('MASTER_APP.pop_sec_cache', [$user->sec_user_id]);
 
                     }
 

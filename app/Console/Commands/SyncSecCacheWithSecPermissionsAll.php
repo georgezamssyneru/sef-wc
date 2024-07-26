@@ -42,10 +42,21 @@ class SyncSecCacheWithSecPermissionsAll extends Command
     public function handle()
     {
 
-        DB::connection('pgsqlMasterApp')
-            ->select("call pop_all_sec_cache()");
+        try {
+            
+            // Execute the stored procedure within the specified schema
+            DB::executeProcedure('MASTER_APP.POP_ALL_SEC_CACHE');
+            
+            // Return true if the procedure executes successfully
+            return true;
 
-        return true;
+        } catch (\Exception $e) {
+            // Log the error message
+            //Log::error('Error executing stored procedure MASTER_APP.POP_ALL_SEC_CACHE: ' . $e->getMessage());
+            
+            // Optionally, handle the exception (e.g., return false or throw the exception)
+            return false; // or throw $e; if you want to propagate the exception
+        }
 
     }
 

@@ -17,10 +17,29 @@ use Hip\CustomAuth\Http\Controllers\AuthController;
 */
 
 Route::get('api/oracle', function () {
-    return response([
-        'success'   => true,
-        'message'   => App::get()
-    ]);
+
+    try {
+        
+        // Execute the stored procedure within the specified schema
+        $results = DB::executeProcedure('MASTER_APP.POP_ALL_SEC_CACHE');
+
+    
+        // Return true if the procedure executes successfully
+        return response([
+            'success'   => 'ffff',
+            // 'message'   => App::get()
+        ]);
+
+    } catch (\Exception $e) {
+
+       
+        // Log the error message
+        Log::error('Error executing stored procedure MASTER_APP.POP_ALL_SEC_CACHE: ' . $e->getMessage());
+        
+        // Optionally, handle the exception (e.g., return false or throw the exception)
+        return false; // or throw $e; if you want to propagate the exception
+    }
+    
 });
 
 //  --------    REGISTER

@@ -9,8 +9,6 @@ class SecPermissionLink extends Model
 
     protected $table = 'sec_permission_link';
 
-    protected $primaryKey = 'p_link_id';
-
     /**
      * The attributes that are mass assignable.
      *
@@ -20,7 +18,9 @@ class SecPermissionLink extends Model
 
     public $timestamps = false;
 
-    protected $casts = [
-        'p_link_id' => 'string'
-    ];
+    protected $primaryKey = 'p_link_id';
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
 }
