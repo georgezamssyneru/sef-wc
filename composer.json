@@ -13,6 +13,8 @@
     "hip/custom-auth": "dev-main",
     "hip/package-role-management": "dev-main",
     "hip/package-user-management": "dev-main",
+    "hip/package-map-management": "dev-main",
+    "hip/package-grid-editing": "dev-main",
     "krlove/eloquent-model-generator": "*",
     "laravel/framework": "^8.65",
     "laravel/sanctum": "^2.13",
@@ -55,6 +57,14 @@
     {
       "type": "path",
       "url": "./packages/PackageRoleManagment"
+    },
+    {
+      "type": "path",
+      "url": "./packages/PackageMapManagment"
+    },
+    {
+      "type": "path",
+      "url": "./packages/GridEditing"
     }
   ],
   "autoload-dev": {

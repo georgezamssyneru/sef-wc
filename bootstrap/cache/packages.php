@@ -47,6 +47,20 @@
       0 => 'Hip\\CustomAuth\\Providers\\CustomAuthServiceProvider',
     ),
   ),
+  'hip/package-grid-editing' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Hip\\GridEditing\\Providers\\GridEditingServiceProvider',
+    ),
+  ),
+  'hip/package-map-management' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Hip\\PackageMapManagement\\Providers\\RolesMapProvider',
+    ),
+  ),
   'hip/package-role-management' => 
   array (
     'providers' => 
