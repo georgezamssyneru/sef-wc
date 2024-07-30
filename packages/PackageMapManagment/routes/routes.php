@@ -1,6 +1,8 @@
 <?php
 
 use Hip\GridEditing\Http\Controllers\GridEditingController;
+use Hip\PackageMapManagement\Http\Controllers\AppMapLinkController;
+use Hip\PackageMapManagement\Http\Controllers\AppMapStyleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Hip\PackageMapManagement\Http\Controllers\PackageMapController;
@@ -47,6 +49,12 @@ Route::group(['middleware' => [ 'auth:sanctum', 'ensureAdmin' ]], function () {
     // Route::resource('api/roles/users', UserRoleController::class );
 
     // Route::resource('api/roles/permissions', RolePermissionController::class );
+
+    Route::resource('api/map/getAppMapLink', AppMapLinkController::class );
+
+    Route::resource('api/map/mapStyles', AppMapStyleController::class );
+
+    Route::get('api/getAppMapStyles', [ AppMapStyleController::class, 'getAppMapStyles' ]);
 
     Route::get('api/getAllClasses', [ GridEditingController::class, 'getAllClasses' ]);
 

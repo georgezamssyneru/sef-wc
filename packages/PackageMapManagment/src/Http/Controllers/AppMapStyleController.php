@@ -8,6 +8,7 @@ use App\Models\AppClass;
 use App\Models\AppGridAttributes;
 use App\Models\AppMapLayer;
 use App\Models\AppMapLink;
+use App\Models\AppMapStyle;
 use App\Models\AppVersion;
 use App\Models\SecPermission;
 use App\Models\SecRoleUser;
@@ -21,7 +22,7 @@ use Illuminate\Support\Str;
 use Validator;
 use Enforcer;
 
-class MapLayerController extends Controller
+class AppMapStyleController extends Controller
 {
 
     /**
@@ -128,7 +129,7 @@ class MapLayerController extends Controller
 
         };
 
-        $getAppAttribute = AppMapLayer::when($sorting, function ($query) use ($sorting) {
+        $getAppAttribute = AppMapStyle::when($sorting, function ($query) use ($sorting) {
 
             if ($sorting != '') {
                 return $query->orderByRaw($sorting);
@@ -143,7 +144,7 @@ class MapLayerController extends Controller
             //         ->where( 'role_id', '=', $request->role_id )
             //         ->pluck('permission_id')
             // )
-            ->orderBy('layer_name', 'DESC')
+            ->orderBy('map_style_name', 'DESC')
             ->skip($request->skip)
             ->take($request->take)
             ->get();
@@ -177,7 +178,7 @@ class MapLayerController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(),[
-            'layer_name' => 'required'
+            'map_style_name' => 'required'
         ]);
 
         if($validator->fails()){
@@ -191,12 +192,55 @@ class MapLayerController extends Controller
             // $getRequst['permission_id'] = Str::uuid()->toString();
 
             //  CREATE THE CLASS
-            AppMapLayer::create( $request->all() );
+            AppMapStyle::create( $request->all() );
 
             //Artisan::call('appSyncSecCacheWithSecPermissionAll:run', []);
 
             return response()->json([
                 'success' => true
+            ]);
+
+        }catch (\Illuminate\Database\QueryException $e) {
+
+            //  LOG TO DB
+            event(new EventHistory(array(
+                'sec_user_id' => auth('sanctum')->user()->sec_user_id,
+                'email'     => auth('sanctum')->user()->email,
+                'url ' => $request->fullUrl(),
+                'error' => $e->getMessage()
+            ), 'API_ENDPOINT_ERROR'));
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+
+        }catch(\Exception $e){
+
+            //  LOG TO DB
+            event(new EventHistory(array(
+                'sec_user_id' => auth('sanctum')->user()->sec_user_id,
+                'email'     => auth('sanctum')->user()->email,
+                'url ' => $request->fullUrl(),
+                'error' => $e->getMessage()
+            ), 'API_ENDPOINT_ERROR'));
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+
+        }
+
+    }
+
+    public function getAppMapStyles(Request $request){
+
+        try {
+
+            return response()->json([
+                'success' => true,
+                'data' => AppMapStyle::get()
             ]);
 
         }catch (\Illuminate\Database\QueryException $e) {
@@ -268,7 +312,7 @@ class MapLayerController extends Controller
             // $getRequest['sec_user_id'] = auth('sanctum')->user()->sec_user_id;
 
             //Determine the controller that must be run
-            $getFacility = AppMapLayer::find( $id );
+            $getFacility = AppMapStyle::find( $id );
             $getFacility->update($getRequest);
             $getFacility->save();
 
@@ -303,13 +347,7 @@ class MapLayerController extends Controller
 
         try {
 
-            //  ------- DELETE APP MAP LINK
-            AppMapLink::where([
-                ['map_layer_id', '=', $id ],
-                // ['map_id', '=', $request->map_id ],
-            ])->first()->delete();
-
-            AppMapLayer::where('map_layer_id', $id )->delete();
+            AppMapStyle::where('map_style_id', $id )->delete();
 
             return response()->json([
                 'success' => true
