@@ -54,7 +54,7 @@ Route::group(['middleware' => [ 'auth:sanctum', 'ensureAdmin' ]], function () {
 
     Route::resource('api/map/mapStyles', AppMapStyleController::class );
 
-    Route::get('api/getAppMapStyles', [ AppMapStyleController::class, 'getAppMapStyles' ]);
+    Route::get('api/map/getAppMapStyles', [ AppMapStyleController::class, 'getAppMapStyles' ]);
 
     Route::get('api/getAllClasses', [ GridEditingController::class, 'getAllClasses' ]);
 
