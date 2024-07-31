@@ -27,10 +27,22 @@ RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     libpng-dev \
     libfreetype6-dev \
+    gnupg \
     && rm -rf /var/lib/apt/lists/*
+
+# Install Microsoft SQL Server dependencies
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
+    && curl https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/sources.list.d/mssql-release.list \
+    && apt-get update \
+    && ACCEPT_EULA=Y apt-get install -y msodbcsql18 mssql-tools18 unixodbc-dev
 
 # Install Composer
 COPY --from=composer:2.4 /usr/bin/composer /usr/bin/composer
+
+# Install sqlcmd
+RUN apt-get update \
+    && ACCEPT_EULA=Y apt-get install -y mssql-tools18 \
+    && ln -sfn /opt/mssql-tools18/bin/sqlcmd /usr/bin/sqlcmd
 
 # Download and install Oracle Instant Client and SDK
 RUN mkdir /opt/oracle \
@@ -48,6 +60,10 @@ RUN mkdir /opt/oracle \
 # Install and enable OCI8 extension
 RUN docker-php-ext-configure oci8 --with-oci8=instantclient,/opt/oracle/instantclient \
     && docker-php-ext-install oci8
+
+# Install SQL Server extension
+RUN pecl install sqlsrv pdo_sqlsrv \
+    && docker-php-ext-enable sqlsrv pdo_sqlsrv
 
 # Install other PHP extensions
 RUN docker-php-ext-configure opcache --enable-opcache \

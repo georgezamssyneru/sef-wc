@@ -107,4 +107,25 @@ class ExternalHelper{
 
     }
 
+    /**
+     * Summary of getTableSchema
+     * @param mixed $tableName
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public static function getTableSchema($tableName, $connection)
+    {
+        // SQL query to get column names and data types
+        $query = "
+            SELECT COLUMN_NAME, DATA_TYPE
+            FROM INFORMATION_SCHEMA.COLUMNS
+            WHERE TABLE_NAME = ?
+        ";
+
+        // Execute the query on the 'sqlsrv' connection
+        $columns = DB::connection($connection)->select($query, [$tableName]);
+
+        return $columns;
+    
+    }
+
 }

@@ -24,6 +24,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     //    APP CLASS
     Route::get('api/getGridAppClass', [GridEditingController::class, 'getGridAppClass']);
 
+    Route::get('api/getDataSources', [GridEditingController::class, 'getDataSources']);
+
     Route::get('api/getAllClasses', [ GridEditingController::class, 'getAllClasses' ]);
 
     Route::get('api/getGridAttributeFromClassAttribute', [ GridEditingController::class, 'getGridAttributeFromClassAttribute' ]);

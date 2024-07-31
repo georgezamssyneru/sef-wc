@@ -9,6 +9,7 @@ use App\Models\AppClassAttribute;
 use App\Models\AppGrid;
 use App\Models\AppGridAttributes;
 use App\Models\AppGridType;
+use App\Models\AppDataSource;
 use App\Models\MasterData\FormGenerator\AppForm;
 use App\Models\MasterData\HipsHealthFacility;
 use App\Models\MasterData\HipsHealthFacilityType;
@@ -102,6 +103,47 @@ class GridEditingController extends Controller
         $this->whichModel = app($getTheApp);
 
         return $gridId;
+
+    }
+
+    public function getDataSources(Request $request){
+
+        try{
+
+            return response()->json([
+                'success' => true,
+                'data' => AppDataSource::get()
+            ]);
+
+        }catch (\Illuminate\Database\QueryException $e) {
+
+            //  LOG TO DB
+            event( new EventHistory( array(
+                'email'     => auth('sanctum')->user()->email,
+                'url '      => $request->fullUrl(),
+                'error'     => $e->getMessage()
+            ),'API_ENDPOINT_ERROR') );
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+
+        }catch(\Exception $e){
+
+            //  LOG TO DB
+            event( new EventHistory( array(
+                'email'     => auth('sanctum')->user()->email,
+                'url '      => $request->fullUrl(),
+                'error'     => $e->getMessage()
+            ),'API_ENDPOINT_ERROR') );
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+
+        }
 
     }
 

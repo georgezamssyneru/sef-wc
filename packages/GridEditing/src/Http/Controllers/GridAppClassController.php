@@ -212,16 +212,18 @@ class GridAppClassController extends Controller
             }
 
             //  CREATE THE CLASS
-            AppClass::create( $request->all() );
+            $appClass = AppClass::create( $request->all() );
 
             //  RUN THE PROCEDURE TO CREATE THE CLASS ATTRIBUTES
-            DB::connection('pgsqlMasterApp')
-                ->select("CALL generate_class_attributes(?)",array($request->class_id));
+            // DB::connection('pgsqlMasterApp')
+            //     ->select("CALL generate_class_attributes(?)",array($request->class_id));
+
+            //$getColumnAttributes = ExternalHelper::getTableSchema();
 
             return response()->json([
-                'success' => true
+                'success' => true,
+                'data'    => $appClass
             ]);
-
 
         }catch (\Illuminate\Database\QueryException $e) {
 
@@ -233,7 +235,8 @@ class GridAppClassController extends Controller
             ),'API_ENDPOINT_ERROR') );
 
             return response()->json([
-                'success' => false
+                'success' => false,
+                'error'     => $e->getMessage()
             ]);
 
         }catch(\Exception $e){
@@ -246,7 +249,8 @@ class GridAppClassController extends Controller
             ),'API_ENDPOINT_ERROR') );
 
             return response()->json([
-                'success' => false
+                'success' => false,
+                'error'     => $e->getMessage()
             ]);
 
         }

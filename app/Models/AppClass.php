@@ -18,18 +18,22 @@ class AppClass extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'class_id',
-        'class_type',
-        'class_schema',
-        'class_name',
-        'display_name',
-        'pk_field_name' ];
+    protected $guarded = [];
 
     public $timestamps = false;
 
+    public $incrementing = false;
+
     protected $casts = [
-        'class_id' => 'string'
+        'class_type' => 'integer',
+        'class_id'  => 'string'
     ];
+
+    /**
+     * The "type" of the primary key ID.
+     *
+     * @var string
+     */
+    protected $keyType = 'string';
 
 }

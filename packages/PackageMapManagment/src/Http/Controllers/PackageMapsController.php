@@ -150,4 +150,63 @@ class PackageMapsController extends Controller
 
     }
 
+    /**
+     * 
+     * 
+     * @param mixed $id
+     * @param \Illuminate\Http\Request $request
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public function removeMap( $id, Request $request ){
+
+        try {
+
+            AppMapLink::where([
+               ['map_id', '=', $id ],
+            ])->delete();
+
+            AppMap::where([
+                ['map_id', '=', $id ],
+             ])->delete();
+
+            return response()->json([
+                'success'    => true,
+                'map_id' => $id
+            ]);
+
+        }catch (\Illuminate\Database\QueryException $e) {
+
+            //  LOG TO DB
+            event(new EventHistory(array(
+                'sec_user_id' => auth('sanctum')->user()->sec_user_id,
+                'email'     => auth('sanctum')->user()->email,
+                'url ' => $request->fullUrl(),
+                'error' => $e->getMessage()
+            ), 'API_ENDPOINT_ERROR'));
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'map_id' => $id
+            ]);
+
+        }catch(\Exception $e){
+
+            //  LOG TO DB
+            event(new EventHistory(array(
+                'sec_user_id' => auth('sanctum')->user()->sec_user_id,
+                'email'     => auth('sanctum')->user()->email,
+                'url ' => $request->fullUrl(),
+                'error' => $e->getMessage()
+            ), 'API_ENDPOINT_ERROR'));
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+
+        }
+
+    }
+
 }
