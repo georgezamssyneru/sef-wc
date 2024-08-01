@@ -1566,6 +1566,47 @@ class GridEditingController extends Controller
 
     }
 
+    public function getAllClassAttributesByClassId(Request $request){
+
+        try{
+
+            return response()->json([
+                'success' => true,
+                'data' => AppClassAttribute::get()
+            ]);
+
+        }catch (\Illuminate\Database\QueryException $e) {
+
+            //  LOG TO DB
+            event( new EventHistory( array(
+                'email'     => auth('sanctum')->user()->email,
+                'url '      => $request->fullUrl(),
+                'error'     => $e->getMessage()
+            ),'API_ENDPOINT_ERROR') );
+
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ]);
+
+        } catch (\Exception $e) {
+
+            //  LOG TO DB
+            event( new EventHistory( array(
+                'email'     => auth('sanctum')->user()->email,
+                'url '      => $request->fullUrl(),
+                'error'     => $e->getMessage()
+            ),'API_ENDPOINT_ERROR') );
+
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ]);
+
+        }
+
+    }
+
     /**
      * TEST
      * @param Request $request

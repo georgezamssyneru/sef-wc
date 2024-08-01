@@ -6,6 +6,7 @@ use App\Events\EventHistory;
 use App\Http\Controllers\Controller;
 use App\Models\AppClass;
 use App\Models\AppGridAttributes;
+use App\Models\AppMapGeoType;
 use App\Models\AppMapLayer;
 use App\Models\AppMapLink;
 use App\Models\AppVersion;
@@ -313,6 +314,45 @@ class MapLayerController extends Controller
 
             return response()->json([
                 'success' => true
+            ]);
+
+        }catch (\Illuminate\Database\QueryException $e) {
+
+            //  LOG TO DB
+            event(new EventHistory(array(
+                'sec_user_id' => auth('sanctum')->user()->sec_user_id,
+                'email'     => auth('sanctum')->user()->email,
+                'error' => $e->getMessage()
+            ), 'API_ENDPOINT_ERROR'));
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+
+        }catch(\Exception $e){
+
+            //  LOG TO DB
+            event(new EventHistory(array(
+                'sec_user_id' => auth('sanctum')->user()->sec_user_id,
+                'email'     => auth('sanctum')->user()->email,
+                'error' => $e->getMessage()
+            ), 'API_ENDPOINT_ERROR'));
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+
+        }
+    }
+
+    public function getAppMapGeoType(Request $request){
+        try {
+
+            return response()->json([
+                'success' => true,
+                'data' => AppMapGeoType::get()
             ]);
 
         }catch (\Illuminate\Database\QueryException $e) {

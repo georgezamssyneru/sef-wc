@@ -43,8 +43,21 @@ class AppClassAttribute extends Model
 
     public $timestamps = false;
 
+    public $incrementing = false;
+
     protected $casts = [
-        'attribute_id' => 'string'
+        'attribute_id' => 'string',
+        'field_order' => 'integer',
+        'numeric_precision' => 'integer',
+        'numeric_scale' => 'integer',
+        'datetime_precision' => 'integer'
     ];
 
+     /**
+     * The "type" of the primary key ID.
+     *
+     * @var string
+     */
+    protected $keyType = 'string';
+    
 }

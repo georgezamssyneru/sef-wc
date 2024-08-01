@@ -116,14 +116,28 @@ class ExternalHelper{
     {
         // SQL query to get column names and data types
         $query = "
-            SELECT COLUMN_NAME, DATA_TYPE
+            SELECT 
+                COLUMN_NAME, 
+                DATA_TYPE, 
+                ORDINAL_POSITION, 
+                NUMERIC_PRECISION, 
+                NUMERIC_SCALE, 
+                CASE 
+                    WHEN COLUMN_DEFAULT IS NOT NULL THEN 'DEFAULT'
+                    ELSE 'NEVER'
+                END AS IS_GENERATED
             FROM INFORMATION_SCHEMA.COLUMNS
             WHERE TABLE_NAME = ?
         ";
 
         // Execute the query on the 'sqlsrv' connection
-        $columns = DB::connection($connection)->select($query, [$tableName]);
-
+        // If we have a connection use the connection else standard connection
+        if($connection){
+            $columns = DB::connection($connection)->select($query, [$tableName]);
+        }else{
+            $columns = DB::select($query, [$tableName]);
+        }
+        
         return $columns;
     
     }

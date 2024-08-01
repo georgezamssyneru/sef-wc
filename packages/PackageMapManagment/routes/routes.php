@@ -3,6 +3,7 @@
 use App\Models\dbo\DimRoad;
 use Hip\GridEditing\Http\Controllers\GridEditingController;
 use Hip\PackageMapManagement\Http\Controllers\AppMapLinkController;
+use Hip\PackageMapManagement\Http\Controllers\AppMapLinkDevExtremeGrid;
 use Hip\PackageMapManagement\Http\Controllers\AppMapStyleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -31,9 +32,13 @@ Route::group(['middleware' => [ 'auth:sanctum', 'ensureAdmin' ]], function () {
 
     Route::resource('api/map/getAppMapLink', AppMapLinkController::class );
 
+    Route::resource('api/map/getAppMapLinkGrid', AppMapLinkDevExtremeGrid::class );
+
     Route::resource('api/map/mapStyles', AppMapStyleController::class );
 
     Route::get('api/map/getAppMapStyles', [ AppMapStyleController::class, 'getAppMapStyles' ]);
+
+    Route::get('api/map/getAppMapGeoType', [ MapLayerController::class, 'getAppMapGeoType' ]);
 
     Route::get('api/getAllClasses', [ GridEditingController::class, 'getAllClasses' ]);
 

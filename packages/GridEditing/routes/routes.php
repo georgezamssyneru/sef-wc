@@ -26,6 +26,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('api/getDataSources', [GridEditingController::class, 'getDataSources']);
 
+    Route::get('api/getAllClassAttributesByClassId', [ GridEditingController::class, 'getAllClassAttributesByClassId' ]);
+
     Route::get('api/getAllClasses', [ GridEditingController::class, 'getAllClasses' ]);
 
     Route::get('api/getGridAttributeFromClassAttribute', [ GridEditingController::class, 'getGridAttributeFromClassAttribute' ]);
