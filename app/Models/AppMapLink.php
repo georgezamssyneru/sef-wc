@@ -8,11 +8,7 @@ class AppMapLink extends Model
 {
     protected $table = 'app_map_link';
 
-    protected $fillable = [
-        'map_id',
-        'map_layer_id',
-        'layer_order'
-    ];
+    protected $guarded = [];
 
     public $timestamps = false;
     public $incrementing = false;

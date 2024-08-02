@@ -32,7 +32,7 @@ Route::group(['middleware' => [ 'auth:sanctum', 'ensureAdmin' ]], function () {
 
     Route::resource('api/map/getAppMapLink', AppMapLinkController::class );
 
-    Route::resource('api/map/getAppMapLinkGrid', AppMapLinkDevExtremeGrid::class );
+    Route::resource('api/map/AppMapLinkGrid', AppMapLinkDevExtremeGrid::class );
 
     Route::resource('api/map/mapStyles', AppMapStyleController::class );
 
@@ -43,6 +43,8 @@ Route::group(['middleware' => [ 'auth:sanctum', 'ensureAdmin' ]], function () {
     Route::get('api/getAllClasses', [ GridEditingController::class, 'getAllClasses' ]);
 
     Route::resource('api/map/mapLayers', MapLayerController::class );
+
+    Route::get('api/map/getMapLayers', [MapLayerController::class, 'getMapLayers' ]);
 
     Route::get('api/map/tree', [ PackageMapsController::class, 'getStructure' ]);
 

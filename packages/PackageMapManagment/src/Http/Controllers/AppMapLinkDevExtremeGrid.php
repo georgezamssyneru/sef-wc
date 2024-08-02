@@ -31,105 +31,114 @@ class AppMapLinkDevExtremeGrid extends Controller
 
         try {
 
-            if ( $request->get('sort')  ) {
+            if ($request->get('sort')) {
 
                 $convertToArraySort = json_decode($request->get('sort'));
-    
+
                 foreach ($convertToArraySort as &$v) {
-    
+
                     $check = ($v->desc) ? 'DESC' : 'ASC';
-    
+
                     $concat = $v->selector . ' ' . $check;
-    
+
                     if ($sorting == '') {
                         $sorting .= $concat;
                     } else {
                         $sorting .= ',' . $concat;
                     }
-    
+
                 }
-    
+
             }
-    
+
             //  --------------------
             //  --------------------    FILTERS, default always has the facility name  not being null
             //  --------------------
             $filters = array();
-    
+
             if ($request->get('filter')) {
-    
+
                 $convertToArray = json_decode($request->get('filter'));
-    
+
                 foreach ($convertToArray as &$value) {
-    
+
                     if (is_array($value)) {
-    
+
                         if ($value != 'and') {
-    
-                            if(is_string($value[0])){
-    
+
+                            if (is_string($value[0])) {
+
                                 switch ($value[1]) {
                                     case 'contains':
                                         array_push($filters, [
-                                            $value[0], 'ILIKE', '%' . $value[2] . '%'
+                                            $value[0],
+                                            'ILIKE',
+                                            '%' . $value[2] . '%'
                                         ]);
                                         break;
                                     case '=':
-    
-                                        if(!Str::isUuid($value[2])){
+
+                                        if (!Str::isUuid($value[2])) {
                                             array_push($filters, [
-                                                $value[0], '=', $value[2]
+                                                $value[0],
+                                                '=',
+                                                $value[2]
                                             ]);
                                         }
                                         break;
                                     default:
-    
+
                                 }
-    
+
                             }
-    
+
                         }
-    
+
                     } else {
-    
-                        if ($value != 'and' ) {
-    
-                            if(is_string($value[0])){
-    
+
+                        if ($value != 'and') {
+
+                            if (is_string($value[0])) {
+
                                 switch ($convertToArray[1]) {
                                     case 'contains':
                                         array_push($filters, [
-                                            $convertToArray[0], 'ILIKE', '%' . $convertToArray[2] . '%'
+                                            $convertToArray[0],
+                                            'ILIKE',
+                                            '%' . $convertToArray[2] . '%'
                                         ]);
                                         break;
                                     case '=':
-                                        if(!Str::isUuid($convertToArray[2])){
+                                        if (!Str::isUuid($convertToArray[2])) {
                                             array_push($filters, [
-                                                $convertToArray[0], '=', $convertToArray[2]
+                                                $convertToArray[0],
+                                                '=',
+                                                $convertToArray[2]
                                             ]);
                                         }
                                         break;
-    
+
                                 }
-    
+
                             }
-    
+
                         }
-    
+
                     }
-    
+
                 }
-    
-            };
-    
+
+            }
+            ;
+
             $getAppAttribute = AppMapLink::when($sorting, function ($query) use ($sorting) {
-    
+
                 if ($sorting != '') {
                     return $query->orderByRaw($sorting);
                 }
-    
+
             });
-    
+
             $getAppAttribute = $getAppAttribute
                 ->where($filters)
                 // ->whereIn('permission_id',
@@ -137,44 +146,47 @@ class AppMapLinkDevExtremeGrid extends Controller
                 //         ->where( 'role_id', '=', $request->role_id )
                 //         ->pluck('permission_id')
                 // )
+                ->where('map_id', $request->map_id)
                 ->orderBy('layer_order', 'DESC')
                 ->skip($request->skip)
                 ->take($request->take)
                 ->get();
-    
+
             return response()->json([
-                'success'       => true,
-                'data'          => $getAppAttribute,
-                'totalCount'    => $getAppAttribute->count(),
-                'summary'       => [],
-                'groupCount'    => [],
-                'orderBy'       => $sorting
+                'success' => true,
+                'data' => $getAppAttribute,
+                'totalCount' => $getAppAttribute->count(),
+                'summary' => [],
+                'groupCount' => [],
+                'orderBy' => $sorting
             ]);
 
-        }catch (\Illuminate\Database\QueryException $e) {
+        } catch (\Illuminate\Database\QueryException $e) {
 
             //  LOG TO DB
-            event(new EventHistory(array(
-                'sec_user_id' => auth('sanctum')->user()->sec_user_id,
-                'email'     => auth('sanctum')->user()->email,
-                'url ' => $request->fullUrl(),
-                'error' => $e->getMessage()
-            ), 'API_ENDPOINT_ERROR'));
+            event(new EventHistory(
+                array(
+                    'sec_user_id' => auth('sanctum')->user()->sec_user_id,
+                    'email' => auth('sanctum')->user()->email,
+                    'url ' => $request->fullUrl(),
+                    'error' => $e->getMessage()
+                ), 'API_ENDPOINT_ERROR'));
 
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage()
             ]);
 
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
 
             //  LOG TO DB
-            event(new EventHistory(array(
-                'sec_user_id' => auth('sanctum')->user()->sec_user_id,
-                'email'     => auth('sanctum')->user()->email,
-                'url ' => $request->fullUrl(),
-                'error' => $e->getMessage()
-            ), 'API_ENDPOINT_ERROR'));
+            event(new EventHistory(
+                array(
+                    'sec_user_id' => auth('sanctum')->user()->sec_user_id,
+                    'email' => auth('sanctum')->user()->email,
+                    'url ' => $request->fullUrl(),
+                    'error' => $e->getMessage()
+                ), 'API_ENDPOINT_ERROR'));
 
             return response()->json([
                 'success' => false,
@@ -202,11 +214,11 @@ class AppMapLinkDevExtremeGrid extends Controller
     //  --------------------
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(),[
-            'map_style_name' => 'required'
+        $validator = Validator::make($request->all(), [
+            'map_layer_id' => 'required'
         ]);
 
-        if($validator->fails()){
+        if ($validator->fails()) {
             return response()->json($validator->errors());
         }
 
@@ -217,7 +229,7 @@ class AppMapLinkDevExtremeGrid extends Controller
             // $getRequst['permission_id'] = Str::uuid()->toString();
 
             //  CREATE THE CLASS
-            AppMapStyle::create( $request->all() );
+            AppMapLink::create($request->all());
 
             //Artisan::call('appSyncSecCacheWithSecPermissionAll:run', []);
 
@@ -225,30 +237,32 @@ class AppMapLinkDevExtremeGrid extends Controller
                 'success' => true
             ]);
 
-        }catch (\Illuminate\Database\QueryException $e) {
+        } catch (\Illuminate\Database\QueryException $e) {
 
             //  LOG TO DB
-            event(new EventHistory(array(
-                'sec_user_id' => auth('sanctum')->user()->sec_user_id,
-                'email'     => auth('sanctum')->user()->email,
-                'url ' => $request->fullUrl(),
-                'error' => $e->getMessage()
-            ), 'API_ENDPOINT_ERROR'));
+            event(new EventHistory(
+                array(
+                    'sec_user_id' => auth('sanctum')->user()->sec_user_id,
+                    'email' => auth('sanctum')->user()->email,
+                    'url ' => $request->fullUrl(),
+                    'error' => $e->getMessage()
+                ), 'API_ENDPOINT_ERROR'));
 
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage()
             ]);
 
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
 
             //  LOG TO DB
-            event(new EventHistory(array(
-                'sec_user_id' => auth('sanctum')->user()->sec_user_id,
-                'email'     => auth('sanctum')->user()->email,
-                'url ' => $request->fullUrl(),
-                'error' => $e->getMessage()
-            ), 'API_ENDPOINT_ERROR'));
+            event(new EventHistory(
+                array(
+                    'sec_user_id' => auth('sanctum')->user()->sec_user_id,
+                    'email' => auth('sanctum')->user()->email,
+                    'url ' => $request->fullUrl(),
+                    'error' => $e->getMessage()
+                ), 'API_ENDPOINT_ERROR'));
 
             return response()->json([
                 'success' => false,
@@ -259,7 +273,8 @@ class AppMapLinkDevExtremeGrid extends Controller
 
     }
 
-    public function getAppMapStyles(Request $request){
+    public function getAppMapStyles(Request $request)
+    {
 
         try {
 
@@ -268,30 +283,32 @@ class AppMapLinkDevExtremeGrid extends Controller
                 'data' => AppMapStyle::get()
             ]);
 
-        }catch (\Illuminate\Database\QueryException $e) {
+        } catch (\Illuminate\Database\QueryException $e) {
 
             //  LOG TO DB
-            event(new EventHistory(array(
-                'sec_user_id' => auth('sanctum')->user()->sec_user_id,
-                'email'     => auth('sanctum')->user()->email,
-                'url ' => $request->fullUrl(),
-                'error' => $e->getMessage()
-            ), 'API_ENDPOINT_ERROR'));
+            event(new EventHistory(
+                array(
+                    'sec_user_id' => auth('sanctum')->user()->sec_user_id,
+                    'email' => auth('sanctum')->user()->email,
+                    'url ' => $request->fullUrl(),
+                    'error' => $e->getMessage()
+                ), 'API_ENDPOINT_ERROR'));
 
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage()
             ]);
 
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
 
             //  LOG TO DB
-            event(new EventHistory(array(
-                'sec_user_id' => auth('sanctum')->user()->sec_user_id,
-                'email'     => auth('sanctum')->user()->email,
-                'url ' => $request->fullUrl(),
-                'error' => $e->getMessage()
-            ), 'API_ENDPOINT_ERROR'));
+            event(new EventHistory(
+                array(
+                    'sec_user_id' => auth('sanctum')->user()->sec_user_id,
+                    'email' => auth('sanctum')->user()->email,
+                    'url ' => $request->fullUrl(),
+                    'error' => $e->getMessage()
+                ), 'API_ENDPOINT_ERROR'));
 
             return response()->json([
                 'success' => false,
@@ -323,7 +340,8 @@ class AppMapLinkDevExtremeGrid extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update($id, Request $request){
+    public function update($id, Request $request)
+    {
 
         try {
 
@@ -337,26 +355,30 @@ class AppMapLinkDevExtremeGrid extends Controller
             // $getRequest['sec_user_id'] = auth('sanctum')->user()->sec_user_id;
 
             //Determine the controller that must be run
-            $getFacility = AppMapStyle::find( $id );
-            $getFacility->update($getRequest);
-            $getFacility->save();
+            $getLink = AppMapLink::where('map_layer_id', $id)
+                ->where('map_id', $request->map_id)
+                ->first();
+
+            if ($getLink) {
+                $getLink->update($getRequest);
+            }
 
             return response()->json([
                 'success' => true
             ]);
 
-        }catch (\Illuminate\Database\QueryException $e) {
+        } catch (\Illuminate\Database\QueryException $e) {
 
             return response()->json([
                 'success' => false,
-                'error'   => $e->getMessage()
+                'error' => $e->getMessage()
             ]);
 
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
 
             return response()->json([
                 'success' => false,
-                'error'   => $e->getMessage()
+                'error' => $e->getMessage()
             ]);
 
         }
@@ -372,34 +394,36 @@ class AppMapLinkDevExtremeGrid extends Controller
 
         try {
 
-            AppMapStyle::where('map_style_id', $id )->delete();
+            AppMapLink::where('map_style_id', $id)->where('map_id', $request->map_id)->delete();
 
             return response()->json([
                 'success' => true
             ]);
 
-        }catch (\Illuminate\Database\QueryException $e) {
+        } catch (\Illuminate\Database\QueryException $e) {
 
             //  LOG TO DB
-            event(new EventHistory(array(
-                'sec_user_id' => auth('sanctum')->user()->sec_user_id,
-                'email'     => auth('sanctum')->user()->email,
-                'error' => $e->getMessage()
-            ), 'API_ENDPOINT_ERROR'));
+            event(new EventHistory(
+                array(
+                    'sec_user_id' => auth('sanctum')->user()->sec_user_id,
+                    'email' => auth('sanctum')->user()->email,
+                    'error' => $e->getMessage()
+                ), 'API_ENDPOINT_ERROR'));
 
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage()
             ]);
 
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
 
             //  LOG TO DB
-            event(new EventHistory(array(
-                'sec_user_id' => auth('sanctum')->user()->sec_user_id,
-                'email'     => auth('sanctum')->user()->email,
-                'error' => $e->getMessage()
-            ), 'API_ENDPOINT_ERROR'));
+            event(new EventHistory(
+                array(
+                    'sec_user_id' => auth('sanctum')->user()->sec_user_id,
+                    'email' => auth('sanctum')->user()->email,
+                    'error' => $e->getMessage()
+                ), 'API_ENDPOINT_ERROR'));
 
             return response()->json([
                 'success' => false,

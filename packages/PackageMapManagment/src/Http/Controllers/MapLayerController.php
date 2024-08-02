@@ -386,4 +386,43 @@ class MapLayerController extends Controller
         }
     }
 
+    function getMapLayers(Request $request){
+        try {
+
+            return response()->json([
+                'success' => true,
+                'data' => AppMapLayer::get()
+            ]);
+
+        }catch (\Illuminate\Database\QueryException $e) {
+
+            //  LOG TO DB
+            event(new EventHistory(array(
+                'sec_user_id' => auth('sanctum')->user()->sec_user_id,
+                'email'     => auth('sanctum')->user()->email,
+                'error' => $e->getMessage()
+            ), 'API_ENDPOINT_ERROR'));
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+
+        }catch(\Exception $e){
+
+            //  LOG TO DB
+            event(new EventHistory(array(
+                'sec_user_id' => auth('sanctum')->user()->sec_user_id,
+                'email'     => auth('sanctum')->user()->email,
+                'error' => $e->getMessage()
+            ), 'API_ENDPOINT_ERROR'));
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+
+        }
+    }
+
 }
