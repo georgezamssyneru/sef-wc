@@ -304,13 +304,16 @@ class MapLayerController extends Controller
 
         try {
 
-            //  ------- DELETE APP MAP LINK
-            AppMapLink::where([
-                ['map_layer_id', '=', $id ],
-                // ['map_id', '=', $request->map_id ],
-            ])->first()->delete();
+            // ------- DELETE APP MAP LINK
+            $getFacility = AppMapLink::where('map_layer_id', $id)
+            ->where('map_id', $request->map_id)
+            ->first();
 
-            AppMapLayer::where('map_layer_id', $id )->delete();
+            if ($getFacility) {
+                $getFacility->delete();
+            } 
+
+            AppMapLayer::where('map_layer_id', $id)->delete();
 
             return response()->json([
                 'success' => true

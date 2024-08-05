@@ -394,7 +394,7 @@ class AppMapLinkDevExtremeGrid extends Controller
 
         try {
 
-            AppMapLink::where('map_style_id', $id)->where('map_id', $request->map_id)->delete();
+            AppMapLink::where('map_layer_id', $id)->where('map_id', $request->map_id)->delete();
 
             return response()->json([
                 'success' => true
